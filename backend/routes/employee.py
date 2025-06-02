@@ -1,7 +1,7 @@
 from typing import List
 
 from bson import ObjectId
-from fastapi import  HTTPException, APIRouter
+from fastapi import HTTPException, APIRouter, Query
 from backend.Models.Employee import Employee
 from backend.db_conect import connect_database
 
@@ -20,9 +20,9 @@ async def add_employee(employee: Employee):
         "employee": employee_dict
     }
 @router.get("/get-employees")
-async def get_employee():
+async def get_employee(skip: int = Query(0, ge=0), limit: int = Query(10, le=100)):
     employees=[]
-    async for employee in employee_collection.find():
+    async for employee in employee_collection.find().skip(skip).limit(limit):
         employee["_id"] = str(employee["_id"])
         employees.append(employee)
     return {"employees": employees}
