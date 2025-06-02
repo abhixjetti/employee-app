@@ -1,3 +1,5 @@
+from typing import List
+
 from bson import ObjectId
 from fastapi import  HTTPException, APIRouter
 from backend.Models.Employee import Employee
@@ -45,3 +47,7 @@ def delete_employee(employee_id:str):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="employee not found")
     return {"message":"employee deleted"}
+@router.get('/available-employees',response_model=List[Employee])
+def get_available_employees():
+    available_employees = employee_collection.find({'is_available':True})
+    return available_employees
